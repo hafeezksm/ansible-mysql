@@ -10,7 +10,10 @@
       image: ami-467ca739
       keypair: ansible-mysql
       region: us-east-1
-      count: 3
+      zone1: us-east-1a
+      zone2: us-east-1b
+      zone3: us-east-1c 
+      count: 1
     tasks:
       - name: create a security group
         local_action:
@@ -36,15 +39,38 @@
               cidr_ip: 0.0.0.0/0
         register: basic_firewall
 
-      - name: Launch the new EC2 Instance
+      - name: Launch the first EC2 Instance
+        local_action: ec2 
+                      group={{ security_group }} 
+                      instance_type={{ instance_type}} 
+                      image={{ image }}
+                      wait=true
+                      region={{ region }} 
+                      zone={{ zone1 }} 
+                      keypair={{ keypair }}
+#                      count={{count}}
+        register: ec2
+      - name: Launch the second EC2 Instance
         local_action: ec2 
                       group={{ security_group }} 
                       instance_type={{ instance_type}} 
                       image={{ image }} 
-                      wait=true 
+                      wait=true
                       region={{ region }} 
+                      zone={{ zone2 }} 
                       keypair={{ keypair }}
-                      count={{count}}
+ #                     count={{count}}
+        register: ec2
+      - name: Launch the third EC2 Instance
+        local_action: ec2 
+                      group={{ security_group }} 
+                      instance_type={{ instance_type}} 
+                      image={{ image }} 
+                      wait=true
+                      region={{ region }} 
+                      zone={{ zone3 }} 
+                      keypair={{ keypair }}
+  #                    count={{count}}
         register: ec2
 
       - name: Add the newly created EC2 instance(s) to the local host group (located inside the directory)
