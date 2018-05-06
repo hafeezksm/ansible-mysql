@@ -113,7 +113,7 @@
         ec2_elb_lb:
           name: mysql-load-balancer
           state: present
-          region: us-east-1
+          region: "{{ region }}"
           zones:
             - us-east-1a
             - us-east-1b
